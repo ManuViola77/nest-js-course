@@ -33,6 +33,14 @@ export class TasksController {
     return this.tasksService.deleteTask(id);
   }
 
+  @Patch('/:id/status')
+  updateTaskStatus(
+    @Param('id') id: string,
+    @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+  ): Promise<Task> {
+    return this.tasksService.updateTaskStatus(id, updateTaskStatusDto);
+  }
+
   /* @Get()
   getTasks(@Query() filterDto: GetTaskFilterDto): Task[] {
     if (Object.keys(filterDto).length) {
@@ -42,11 +50,5 @@ export class TasksController {
     }
   }
 
-  @Patch('/:id/status')
-  updateTaskStatus(
-    @Param('id') id: string,
-    @Body() updateTaskStatusDto: UpdateTaskStatusDto,
-  ): Task {
-    return this.tasksService.updateTaskStatus(id, updateTaskStatusDto);
-  } */
+   */
 }
