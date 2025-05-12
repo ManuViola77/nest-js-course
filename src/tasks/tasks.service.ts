@@ -23,6 +23,10 @@ export class TasksService {
     return this.taskRepository.createTask(createTaskDto);
   }
 
+  async deleteTask(id: string): Promise<void> {
+    await this.taskRepository.deleteTask(id);
+  }
+
   /*   getAllTasks(): Task[] {
     return this.tasks;
   }
@@ -37,11 +41,6 @@ export class TasksService {
             .toLowerCase()
             .includes(filterDto.search.toLowerCase())),
     );
-  }
-
-  deleteTask(id: string): void {
-    const task = this.getTaskById(id);
-    this.tasks = this.tasks.filter(({ id: taskId }) => taskId !== task.id);
   }
 
   updateTaskStatus(id: string, updateTaskStatusDto: UpdateTaskStatusDto): Task {
