@@ -28,21 +28,7 @@ export class TasksService {
     return await this.taskRepository.updateTaskStatus(id, updateTaskStatusDto);
   }
 
-  /*   getAllTasks(): Task[] {
-    return this.tasks;
+  async getTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
+    return await this.taskRepository.getTasks(filterDto);
   }
-
-  getTasksWithFilters(filterDto: GetTaskFilterDto): Task[] {
-    return this.tasks.filter(
-      (task) =>
-        (!filterDto.status || task.status === filterDto.status) &&
-        (!filterDto.search ||
-          task.title.toLowerCase().includes(filterDto.search.toLowerCase()) ||
-          task.description
-            .toLowerCase()
-            .includes(filterDto.search.toLowerCase())),
-    );
-  }
-
-   */
 }
