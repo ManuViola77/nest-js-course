@@ -3,9 +3,23 @@ import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-task-filter.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { TasksRepository } from './tasks.repository';
+import { Task } from './task.entity';
 
 @Injectable()
 export class TasksService {
+  constructor(private readonly taskRepository: TasksRepository) {}
+
+  async getTaskById(id: string): Promise<Task> {
+    const task = await this.taskRepository.findById(id);
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found.`);
+    }
+
+    return task;
+  }
+
   /*   getAllTasks(): Task[] {
     return this.tasks;
   }
@@ -22,14 +36,7 @@ export class TasksService {
     );
   }
 
-  getTaskById(id: string): Task {
-    const task = this.tasks.find(({ id: taskId }) => taskId === id);
-    if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found.`);
-    }
 
-    return task;
-  }
 
   createTask(createTaskDto: CreateTaskDto): Task {
     const { title, description } = createTaskDto;
