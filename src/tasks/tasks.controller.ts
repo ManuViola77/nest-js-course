@@ -18,7 +18,6 @@ import { Task } from './task.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
-import { ConfigService } from '@nestjs/config';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
@@ -26,12 +25,7 @@ export class TasksController {
   // 'TasksController' indica el contexto, para saber de donde viene el log
   private logger = new Logger('TasksController');
 
-  constructor(
-    private readonly tasksService: TasksService,
-    private readonly configService: ConfigService,
-  ) {
-    console.log(this.configService.get('TEST_VALUE'));
-  }
+  constructor(private readonly tasksService: TasksService) {}
 
   @Get()
   getTasks(
