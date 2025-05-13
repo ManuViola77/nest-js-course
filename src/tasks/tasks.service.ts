@@ -10,8 +10,8 @@ import { User } from 'src/auth/user.entity';
 export class TasksService {
   constructor(private readonly taskRepository: TasksRepository) {}
 
-  getTaskById(id: string): Promise<Task> {
-    return this.taskRepository.findById(id);
+  getTaskById(id: string, user: User): Promise<Task> {
+    return this.taskRepository.findById(id, user);
   }
 
   createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
@@ -25,8 +25,13 @@ export class TasksService {
   async updateTaskStatus(
     id: string,
     updateTaskStatusDto: UpdateTaskStatusDto,
+    user: User,
   ): Promise<Task> {
-    return await this.taskRepository.updateTaskStatus(id, updateTaskStatusDto);
+    return await this.taskRepository.updateTaskStatus(
+      id,
+      updateTaskStatusDto,
+      user,
+    );
   }
 
   async getTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {

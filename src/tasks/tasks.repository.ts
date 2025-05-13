@@ -14,8 +14,8 @@ export class TasksRepository {
     @InjectRepository(Task) private readonly repository: Repository<Task>,
   ) {}
 
-  async findById(id: string): Promise<Task> {
-    const task = await this.repository.findOneBy({ id });
+  async findById(id: string, user: User): Promise<Task> {
+    const task = await this.repository.findOneBy({ id, user });
 
     if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found.`);
@@ -49,8 +49,9 @@ export class TasksRepository {
   async updateTaskStatus(
     id: string,
     updateTaskStatusDto: UpdateTaskStatusDto,
+    user: User,
   ): Promise<Task> {
-    const task: Task = await this.findById(id);
+    const task: Task = await this.findById(id, user);
     task.status = updateTaskStatusDto.status;
     await this.repository.save(task);
     return task;

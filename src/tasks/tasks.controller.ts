@@ -23,9 +23,17 @@ import { User } from 'src/auth/user.entity';
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
+  @Get()
+  getTasks(
+    @Query() filterDto: GetTaskFilterDto,
+    @GetUser() user: User,
+  ): Promise<Task[]> {
+    return this.tasksService.getTasks(filterDto, user);
+  }
+
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Promise<Task> {
-    return this.tasksService.getTaskById(id);
+  getTaskById(@Param('id') id: string, @GetUser() user: User): Promise<Task> {
+    return this.tasksService.getTaskById(id, user);
   }
 
   @Post()
@@ -45,15 +53,8 @@ export class TasksController {
   updateTaskStatus(
     @Param('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
-  ): Promise<Task> {
-    return this.tasksService.updateTaskStatus(id, updateTaskStatusDto);
-  }
-
-  @Get()
-  getTasks(
-    @Query() filterDto: GetTaskFilterDto,
     @GetUser() user: User,
-  ): Promise<Task[]> {
-    return this.tasksService.getTasks(filterDto, user);
+  ): Promise<Task> {
+    return this.tasksService.updateTaskStatus(id, updateTaskStatusDto, user);
   }
 }
