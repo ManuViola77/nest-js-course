@@ -54,4 +54,15 @@ export class UsersRepository {
 
     throw new UnauthorizedException('Please check your login credentials');
   }
+
+  async validateUser(payload: JwtPayload): Promise<User> {
+    const { username } = payload;
+    const user: User = await this.repository.findOneBy({ username });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return user;
+  }
 }
