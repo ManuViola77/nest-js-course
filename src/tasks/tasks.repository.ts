@@ -1,6 +1,11 @@
 import { Repository } from 'typeorm';
 import { Task } from './task.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskStatus } from './task-status.enum';
@@ -10,9 +15,39 @@ import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class TasksRepository {
+  private logger = new Logger('TasksRepository');
+
   constructor(
     @InjectRepository(Task) private readonly repository: Repository<Task>,
   ) {}
+
+  async getTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
+    const { status, search } = filterDto;
+    const query = this.repository.createQueryBuilder('task');
+    query.where({ user });
+
+    if (status) {
+      query.andWhere('task.status = :status', { status });
+    }
+
+    if (search) {
+      query.andWhere(
+        '(LOWER(task.title) LIKE :search OR LOWER(task.description) LIKE :search)',
+        { search: `%${search.toLowerCase()}%` },
+      );
+    }
+
+    try {
+      const tasks = await query.getMany();
+      return tasks;
+    } catch (error) {
+      this.logger.error(
+        `Failed to get tasks for user "${user.username}". Filters: ${JSON.stringify(filterDto)}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
+  }
 
   async findById(id: string, user: User): Promise<Task> {
     const task = await this.repository.findOneBy({ id, user });
@@ -55,25 +90,5 @@ export class TasksRepository {
     task.status = updateTaskStatusDto.status;
     await this.repository.save(task);
     return task;
-  }
-
-  async getTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
-    const { status, search } = filterDto;
-    const query = this.repository.createQueryBuilder('task');
-    query.where({ user });
-
-    if (status) {
-      query.andWhere('task.status = :status', { status });
-    }
-
-    if (search) {
-      query.andWhere(
-        '(LOWER(task.title) LIKE :search OR LOWER(task.description) LIKE :search)',
-        { search: `%${search.toLowerCase()}%` },
-      );
-    }
-
-    const tasks = await query.getMany();
-    return tasks;
   }
 }
