@@ -18,8 +18,8 @@ export class TasksService {
     return this.taskRepository.createTask(createTaskDto, user);
   }
 
-  async deleteTask(id: string): Promise<void> {
-    await this.taskRepository.deleteTask(id);
+  async deleteTask(id: string, user: User): Promise<void> {
+    await this.taskRepository.deleteTask(id, user);
   }
 
   async updateTaskStatus(
